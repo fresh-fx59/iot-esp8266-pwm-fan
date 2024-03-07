@@ -1,10 +1,12 @@
 #include <ESP8266WiFi.h>
 #include <PubSubClient.h> // MQTT Client
 #include <secret.h>
+#include <fan-pwm.h>
 
 // https://github.com/yandex-cloud/examples/blob/master/iot/Samples/esp8266/Esp8266YandexIoTCoreSample.ino
+// https://mysku.club/blog/diy/97421.html
 
-const char* version = "pwm_0.0.1";
+const char* version = "pwm_0.0.3";
 
 const char* mqttserver = "mqtt.cloud.yandex.net";
 const int mqttport=8883;
@@ -97,15 +99,18 @@ void messageReceived(char* topic, byte* payload, unsigned int length) {
     digitalWrite(LED_BUILTIN, LOW); // Turn the LED on (Note that LOW is the voltage level
     // but actually the LED is on; this is because
     // it is active low on the ESP-01)
+    SetFanLevel(100);
   }
   else
   {
     DEBUG_SERIAL.println("(char)payload[0] != '1'");
     digitalWrite(LED_BUILTIN, HIGH); // Turn the LED off by making the voltage HIGH
+    SetFanLevel(0);
   }
 }
 
 void setup() {
+  InitFan();
   pinMode(LED_BUILTIN, OUTPUT);
   DEBUG_SERIAL.begin(DEBUG_SERIAL_BAUDRATE);
   delay(10);
