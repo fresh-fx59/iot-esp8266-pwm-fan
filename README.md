@@ -17,4 +17,10 @@ For this project we need to connect **D6** pin to fan's PWM input and **D5** pin
 
 ![board connection](https://github.com/fresh-fx59/iot-mqtt-yc-esp8266-pwm-fan/assets/5788874/57513105-9efd-48ec-912a-8413a9bf614d)
 
+# How does it work?
+When everything is setted up you can send 0 or 1 as payload and se how fan speed decrease to least RPM or max RPM. You can measure RPM via [this](https://play.google.com/store/apps/details?id=com.ToolsCompany.TachometerRPM) app. Also RPM are transmitted every second to serial output.
+
+# Source
+I've taken a lot of info from [this](https://mysku.club/blog/diy/97421.html) article.
+
 
