@@ -6,7 +6,7 @@
 // https://github.com/yandex-cloud/examples/blob/master/iot/Samples/esp8266/Esp8266YandexIoTCoreSample.ino
 // https://mysku.club/blog/diy/97421.html
 
-const char* version = "pwm_0.0.3";
+const char* version = "pwm_0.0.7";
 
 const char* mqttserver = "mqtt.cloud.yandex.net";
 const int mqttport=8883;
@@ -81,17 +81,7 @@ void connect() {
   client.subscribe(topicCommands.c_str());
 }
 
-void messageReceived(char* topic, byte* payload, unsigned int length) {
-  String topicString = String(topic);
-  DEBUG_SERIAL.print("Message received. Topic: ");
-  DEBUG_SERIAL.println(topicString.c_str());
-  String payloadStr = "";
-  for (int i=0;i<length;i++) {
-    payloadStr += (char)payload[i];
-  }
-  DEBUG_SERIAL.print("Payload: ");
-  DEBUG_SERIAL.println(payloadStr);
-
+void performAction(byte* payload) {
   // Switch on the LED if an 1 was received as first character
   if ((char)payload[0] == '1')
   {
@@ -107,6 +97,20 @@ void messageReceived(char* topic, byte* payload, unsigned int length) {
     digitalWrite(LED_BUILTIN, HIGH); // Turn the LED off by making the voltage HIGH
     SetFanLevel(0);
   }
+}
+
+void messageReceived(char* topic, byte* payload, unsigned int length) {
+  String topicString = String(topic);
+  DEBUG_SERIAL.print("Message received. Topic: ");
+  DEBUG_SERIAL.println(topicString.c_str());
+  String payloadStr = "";
+  for (int i=0;i<length;i++) {
+    payloadStr += (char)payload[i];
+  }
+  DEBUG_SERIAL.print("Payload: ");
+  DEBUG_SERIAL.println(payloadStr);
+
+  performAction(payload);
 }
 
 void setup() {
@@ -126,6 +130,7 @@ void setup() {
 
 void loop() {
   // put your main code here, to run repeatedly:
+  CalcFanRPM();
   client.loop();
   if (!client.connected()) {
     DEBUG_SERIAL.println("Trying to connect");
