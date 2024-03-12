@@ -9,7 +9,7 @@ PWM fan has 4 pins
 
 ![pwm fan pict](https://github.com/fresh-fx59/iot-mqtt-yc-esp8266-pwm-fan/assets/5788874/f0f2b57a-c73c-4b59-8fc1-4267effa9688)
 
-NodeMCU has these pins available
+[NodeMCU](https://www.electronicwings.com/nodemcu/nodemcu-gpio-with-arduino-ide) has these pins available
 
 ![nodemcu-pins](https://github.com/fresh-fx59/iot-mqtt-yc-esp8266-pwm-fan/assets/5788874/9bc3d5d0-2901-4cf2-a210-ccffb46660bd)
 
