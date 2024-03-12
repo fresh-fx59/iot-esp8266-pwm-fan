@@ -20,6 +20,8 @@ For this project we need to connect **D6** pin to fan's PWM input and **D5** pin
 # How does it work?
 When everything is setted up you can send 0 or 1 as payload and see how fan speed decrease to least RPM or max RPM. You can measure RPM via [this](https://play.google.com/store/apps/details?id=com.ToolsCompany.TachometerRPM) app. Also RPM are transmitted every second to serial output.
 
+PWM explanation could be found [here](https://forum.micropython.org/viewtopic.php?t=7050#p40165)
+
 # Source
 I've taken a lot of info from [this](https://mysku.club/blog/diy/97421.html) article.
 
