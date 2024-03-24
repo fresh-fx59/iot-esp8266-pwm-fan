@@ -25,10 +25,15 @@
 *.la
 *.a
 *.lib
+*.bin
+*.elf
 
 # Executables
 *.exe
 *.out
 *.app
 include/secret.h
+
+# Service Folders
 .pio/
+.vscode/
