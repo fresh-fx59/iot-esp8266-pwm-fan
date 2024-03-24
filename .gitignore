@@ -31,3 +31,4 @@
 *.out
 *.app
 include/secret.h
+.pio/
