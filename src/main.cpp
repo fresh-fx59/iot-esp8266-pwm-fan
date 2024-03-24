@@ -6,16 +6,16 @@
 // https://github.com/yandex-cloud/examples/blob/master/iot/Samples/esp8266/Esp8266YandexIoTCoreSample.ino
 // https://mysku.club/blog/diy/97421.html
 
-const char* version = "pwm_0.0.7";
+const char *version = "pwm_0.0.8";
 
-const char* mqttserver = "mqtt.cloud.yandex.net";
-const int mqttport=8883;
+const char *mqttserver = "mqtt.cloud.yandex.net";
+const int mqttport = 8883;
 
-String topicCommands = String("$devices/")+String(YC_DEVICE_ID)+String("/commands/#");
-String topicEvents = String("$devices/")+String(YC_DEVICE_ID)+String("/events/");
+String topicCommands = String("$devices/") + String(YC_DEVICE_ID) + String("/commands/#");
+String topicEvents = String("$devices/") + String(YC_DEVICE_ID) + String("/events/");
 
-const char* test_root_ca = \
-"-----BEGIN CERTIFICATE-----\n \
+const char *test_root_ca =
+    "-----BEGIN CERTIFICATE-----\n \
 MIIFGTCCAwGgAwIBAgIQJMM7ZIy2SYxCBgK7WcFwnjANBgkqhkiG9w0BAQ0FADAf\
 MR0wGwYDVQQDExRZYW5kZXhJbnRlcm5hbFJvb3RDQTAeFw0xMzAyMTExMzQxNDNa\
 Fw0zMzAyMTExMzUxNDJaMB8xHTAbBgNVBAMTFFlhbmRleEludGVybmFsUm9vdENB\
@@ -46,17 +46,33 @@ Pj78bnC5yCw8P5YylR45LdxLzLO68unoXOyFz1etGXzszw8lJI9LNubYxk77mK8H\
 LpuQKbSbIERsmR+QqQ==\
 -----END CERTIFICATE-----\n";
 
-WiFiClientSecure  net;
+WiFiClientSecure net;
 PubSubClient client(net);
 BearSSL::X509List x509(test_root_ca);
 
 #define DEBUG_SERIAL Serial
 #define DEBUG_SERIAL_BAUDRATE 9600
 
-void connect() {
+void maxSpeedLightUpLed()
+{
+  digitalWrite(LED_BUILTIN, LOW); // Turn the LED on (Note that LOW is the voltage level
+  // but actually the LED is on; this is because
+  // it is active low on the ESP-01)
+  SetFanLevel(100);
+}
+
+void minSpeedTurnOffLed()
+{
+  digitalWrite(LED_BUILTIN, HIGH); // Turn the LED off by making the voltage HIGH
+  SetFanLevel(0);
+}
+
+void connect()
+{
   delay(5000);
   DEBUG_SERIAL.print("Conecting to wifi ...");
-  while (WiFi.status() != WL_CONNECTED) {
+  while (WiFi.status() != WL_CONNECTED)
+  {
     DEBUG_SERIAL.print(".");
     delay(1000);
   }
@@ -65,46 +81,48 @@ void connect() {
   DEBUG_SERIAL.print("Connecting to Yandex IoT Core as ");
   DEBUG_SERIAL.print(YC_DEVICE_ID);
   DEBUG_SERIAL.print(" ...");
-  while (!client.connect("Esp8266Client", YC_DEVICE_ID, MQTT_PASSWORD)) {
+  while (!client.connect("Esp8266Client", YC_DEVICE_ID, MQTT_PASSWORD))
+  {
     DEBUG_SERIAL.print(".");
     delay(1000);
   }
   DEBUG_SERIAL.println(" Connected");
-  if (client.publish(topicEvents.c_str(), YC_DEVICE_ID)) {
-      DEBUG_SERIAL.println("Publish ok");
-    }
-    else {
-      DEBUG_SERIAL.println("Publish failed");
-    }
+  if (client.publish(topicEvents.c_str(), YC_DEVICE_ID))
+  {
+    DEBUG_SERIAL.println("Publish ok");
+  }
+  else
+  {
+    DEBUG_SERIAL.println("Publish failed");
+  }
   DEBUG_SERIAL.println("Subscribe to: ");
   DEBUG_SERIAL.print(topicCommands.c_str());
   client.subscribe(topicCommands.c_str());
 }
 
-void performAction(byte* payload) {
+void performAction(byte *payload)
+{
   // Switch on the LED if an 1 was received as first character
   if ((char)payload[0] == '1')
   {
     DEBUG_SERIAL.println("(char)payload[0] == '1'");
-    digitalWrite(LED_BUILTIN, LOW); // Turn the LED on (Note that LOW is the voltage level
-    // but actually the LED is on; this is because
-    // it is active low on the ESP-01)
-    SetFanLevel(100);
+    maxSpeedLightUpLed();
   }
   else
   {
     DEBUG_SERIAL.println("(char)payload[0] != '1'");
-    digitalWrite(LED_BUILTIN, HIGH); // Turn the LED off by making the voltage HIGH
-    SetFanLevel(0);
+    minSpeedTurnOffLed();
   }
 }
 
-void messageReceived(char* topic, byte* payload, unsigned int length) {
+void messageReceived(char *topic, byte *payload, unsigned int length)
+{
   String topicString = String(topic);
   DEBUG_SERIAL.print("Message received. Topic: ");
   DEBUG_SERIAL.println(topicString.c_str());
   String payloadStr = "";
-  for (int i=0;i<length;i++) {
+  for (int i = 0; i < length; i++)
+  {
     payloadStr += (char)payload[i];
   }
   DEBUG_SERIAL.print("Payload: ");
@@ -113,7 +131,8 @@ void messageReceived(char* topic, byte* payload, unsigned int length) {
   performAction(payload);
 }
 
-void setup() {
+void setup()
+{
   InitFan();
   pinMode(LED_BUILTIN, OUTPUT);
   DEBUG_SERIAL.begin(DEBUG_SERIAL_BAUDRATE);
@@ -125,14 +144,17 @@ void setup() {
   client.setCallback(messageReceived);
   client.setBufferSize(1024);
   client.setKeepAlive(15);
+  maxSpeedLightUpLed();
   connect();
 }
 
-void loop() {
+void loop()
+{
   // put your main code here, to run repeatedly:
   CalcFanRPM();
   client.loop();
-  if (!client.connected()) {
+  if (!client.connected())
+  {
     DEBUG_SERIAL.println("Trying to connect");
     connect();
   }
