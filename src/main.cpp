@@ -2,11 +2,12 @@
 #include <PubSubClient.h> // MQTT Client
 #include <secret.h>
 #include <fan-pwm.h>
+#include <ota.h>
 
 // https://github.com/yandex-cloud/examples/blob/master/iot/Samples/esp8266/Esp8266YandexIoTCoreSample.ino
 // https://mysku.club/blog/diy/97421.html
 
-const char *version = "pwm_0.0.8";
+const char *version = "pwm_0.1.4";
 
 const char *mqttserver = "mqtt.cloud.yandex.net";
 const int mqttport = 8883;
@@ -146,6 +147,7 @@ void setup()
   client.setKeepAlive(15);
   maxSpeedLightUpLed();
   connect();
+  setupOta();
 }
 
 void loop()
@@ -158,4 +160,5 @@ void loop()
     DEBUG_SERIAL.println("Trying to connect");
     connect();
   }
+  loopOta();
 }
